@@ -21,11 +21,17 @@
 
 package api;
 
+import org.jgrapht.Graph;
+
 /**
  * @author              Vy Thuy Nguyen
  * @version             1.0 Jan 22, 2013
  * Last modified:       
  */
-public class InertialPartioner {
-
+public class InertialPartioner 
+{
+    public static Line getLine(Graph g)
+    {
+        return new Line();
+    }
 }

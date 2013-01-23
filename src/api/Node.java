@@ -29,9 +29,18 @@ package api;
 public class Node 
 {
     private int id;
-    private double x;
-    private double y;
-
+    private int x;
+    private int y;
+    private boolean isOnLeftSide;
+    
+    public Node(int id, int x, int y)
+    {
+        this.id = id;
+        this.x = x;
+        this.y = y;
+        isOnLeftSide = false;
+    }
+    
     /**
      * @return the id
      */
@@ -51,7 +60,7 @@ public class Node
     /**
      * @return the x
      */
-    public double getX()
+    public int getX()
     {
         return x;
     }
@@ -59,7 +68,7 @@ public class Node
     /**
      * @param x the x to set
      */
-    public void setX(double x)
+    public void setX(int x)
     {
         this.x = x;
     }
@@ -67,7 +76,7 @@ public class Node
     /**
      * @return the y
      */
-    public double getY()
+    public int getY()
     {
         return y;
     }
@@ -75,9 +84,25 @@ public class Node
     /**
      * @param y the y to set
      */
-    public void setY(double y)
+    public void setY(int y)
     {
         this.y = y;
+    }
+
+    /**
+     * @return the isOnLeftSide
+     */
+    public boolean isIsOnLeftSide()
+    {
+        return isOnLeftSide;
+    }
+
+    /**
+     * @param isOnLeftSide the isOnLeftSide to set
+     */
+    public void setIsOnLeftSide(boolean isOnLeftSide)
+    {
+        this.isOnLeftSide = isOnLeftSide;
     }
     
 }
