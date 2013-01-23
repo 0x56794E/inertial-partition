@@ -36,6 +36,14 @@ public class Line
     private double xbar;
     private double ybar;
 
+    public Line(double a, double b, double xbar, double ybar)
+    {
+        this.a = a;
+        this.b = b;
+        this.xbar = xbar;
+        this.ybar = ybar;
+    }
+    
     /**
      * @return the a
      */
