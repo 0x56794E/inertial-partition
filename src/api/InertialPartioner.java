@@ -36,7 +36,7 @@ public class InertialPartioner
     {
         //Compute xbar and ybar
         double xbar = 0, ybar = 0;
-        int N = g.vertexSet().size();
+        final int N = g.vertexSet().size();
         
         for (Node node : g.vertexSet())
         {
@@ -47,7 +47,7 @@ public class InertialPartioner
         xbar /= N;
         ybar /= N;
         
-        //Compute sume of squares of distance
+        //Compute sum of squares of distance
         double sumXsq = 0, sumYsq = 0, sumXY = 0;
         double xDif = 0, yDif = 0;
         for (Node node : g.vertexSet())
@@ -73,7 +73,7 @@ public class InertialPartioner
         ArrayList<Double> sols = getSolutions(1, //a
                                               0 - sumXsq - sumYsq, //b
                                               sumXsq * sumYsq - sumXY * sumXY); //c
-        if (sols.size() == 0)
+        if (sols.isEmpty())
             throw new Exception("No eigenvalue found!");
         
         lambda = Math.min(sols.get(0), sols.get(1));
