@@ -31,14 +31,14 @@ public class Node
     private int id;
     private int x;
     private int y;
-    private boolean isOnLeftSide;
+    private SideMembership side;
     
     public Node(int id, int x, int y)
     {
         this.id = id;
         this.x = x;
         this.y = y;
-        isOnLeftSide = false;
+        side = SideMembership.LEFT;
     }
     
     /**
@@ -90,19 +90,19 @@ public class Node
     }
 
     /**
-     * @return the isOnLeftSide
+     * @return the side this node is on
      */
-    public boolean isIsOnLeftSide()
+    public SideMembership getSide()
     {
-        return isOnLeftSide;
+        return side;
     }
 
     /**
-     * @param isOnLeftSide the isOnLeftSide to set
+     * @param side the side to set
      */
-    public void setIsOnLeftSide(boolean isOnLeftSide)
+    public void setSide(SideMembership side)
     {
-        this.isOnLeftSide = isOnLeftSide;
+        this.side = side;
     }
     
 }

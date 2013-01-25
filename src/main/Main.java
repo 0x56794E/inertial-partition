@@ -20,8 +20,9 @@
 
 package main;
 
+import api.InertialPartioner;
+import api.Line;
 import api.Node;
-import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
 
@@ -35,9 +36,16 @@ public class Main
     public static final int ROW_COUNT = 10;
     public static final int COL_COUNT = 15;
     
-    public static void main(String[] args)
+    public static void main(String[] args) throws Exception
     {
         SimpleWeightedGraph<Node, DefaultWeightedEdge> g = genGraph();
+        Line line = InertialPartioner.getLine(g);
+        
+        System.out.printf("a = %f, b = %f, xbar = %f, ybar = %f\n", 
+                          line.getA(),
+                          line.getB(), 
+                          line.getXbar(),
+                          line.getYbar());
     }
     
     /**

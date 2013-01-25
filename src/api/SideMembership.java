@@ -21,15 +21,24 @@
 
 package api;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * @author              Vy Thuy Nguyen
- * @version             1.0 Jan 23, 2013
+ * @version             1.0 Jan 24, 2013
  * Last modified:       
  */
-public class QuadraticEquation 
-{
+public enum SideMembership {
+    LEFT ((byte)0), RIGHT ((byte)1);
     
+    private final byte value;
+    
+    private SideMembership(byte value)
+    {
+        this.value = value;
+    }
+    
+    public byte getValue()
+    { 
+        return this.value;
+    }
+
 }
