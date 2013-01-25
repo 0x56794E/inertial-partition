@@ -22,6 +22,7 @@
 package api;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
 
@@ -30,11 +31,15 @@ import org.jgrapht.graph.SimpleWeightedGraph;
  * @version             1.0 Jan 22, 2013
  * Last modified:       
  */
-public class InertialPartioner 
+public class InertialPartitioner 
 {
     /**
-     * Given a graph, this function returns the line that partitions the graph
+     * Given a graph, this function returns the line L that partitions the graph
      * into two parts. 
+     * Line L is represented by L = a * (x - xbar) + b * (y - ybar) = 0.
+     * Also, line L has property sbar which is the median(s1, s2, ..., sn)
+     * where sj is calculated by sj = -b * (xj - xbar) + a * (yj - ybar)
+     * 
      * The computation is as followed:
      * 1) Compute xbar and ybar: (N = number of nodes)
      *    xbar = (Sigmar(xi) i = [0, N - 1]) / N
@@ -76,6 +81,8 @@ public class InertialPartioner
      * 
      *    An exception is thrown if the system falls into the 1st or 3rd case.
      * 
+     * 5) Compute sbar
+     * 
      * @param g
      * @return Line l
      * @throws Exception 
@@ -99,9 +106,6 @@ public class InertialPartioner
                           ybar);
         
         //Compute sum of squares of distance (x1, x2 and x3)
-        //x1 = Sigma[(x - xbar)^2]
-        //x2 = Sigma[(x-xbar)(y - ybar)]
-        //x3 = Sigma[(y - ybar)^2]
         double x1 = 0, x3 = 0, x2 = 0;
         double xDif = 0, yDif = 0;
         for (Node node : g.vertexSet())
@@ -119,15 +123,6 @@ public class InertialPartioner
         
         //Compute a and b
         double a, b, lambda;
-        //Compute lambda
-        //The eigenvector of smallest eigenvalue of A = [X1 X2 X2 X3]
-        //Let lambda be the eigenvalue, I be the 2x2 identity matrix,
-        //X1 = sumXsq, X3 = sumYsq, X2 = sumXY
-        //Then (A - lambda * I)[a b] = 0
-        //=> det(A - lambda * I) = 0
-        //<=> (X1 - lambda)(X3 - lambda) - X2 * X2 = 0
-        //<=> lambda^2 -(X1 + X3) * lambda + X1 * X3 - X2 * X2
-        //Solve this equation and the smallest solution is the eigenvalue we're looking for.
         ArrayList<Double> sols = getSolutions(1, //a
                                               0 - x1 - x3, //b
                                               x1 * x3 - x2 * x2); //c
@@ -141,18 +136,6 @@ public class InertialPartioner
         System.out.printf("The smallest eigenvalue is: lambda = %f\n", lambda);
         
         //Compute a, b
-        //v = [a b] is the eigenvector such that
-        //(A - lambda * I) * v = [0 0]
-        //Or
-        //a * X1 + b * X2 = lambda * a <=> a * (X1 - lambda) + b * X2 = 0  (1)
-        //a * X2 + b * X3 = lambda * b <=> a * X2 + b * (X3 - lambda) = 0  (2)
-        //Note that this system's solution can only be one of the following:
-        //  1) (a, b) = (0, 0)
-        //  2) (a, b) is a vector in the eigenspace whose basis is (-X2 / (X1 - lambda), 1)
-        //  3) the system has no solution.
-        //Since the first and third cases are irrelevant, we only need to look for one of the
-        //vectors in the eigenspace described above.
-        //The easiest one to find is the basis itself.
         if (Double.compare(x2 * x2, 
                            (x1 - lambda) * (x3 - lambda)) != 0) //If the system doesn't have inf. number of solultions
             throw new Exception("The system must have inf. number of solutions. Otherwise, the eigenvector would be [0, 0]");
@@ -160,9 +143,89 @@ public class InertialPartioner
         a = (0 - x2) / (x1 -  lambda);
         b = 1;        
         
-        return new Line(a, b, xbar, ybar);
+        //Compute sbar
+        LinkedList<Double> sValues = new LinkedList<Double>();
+        double sj = 0;
+        int max, min, mid, size;
+        for (Node node : g.vertexSet())
+        {
+            sj = a * (node.getY() - ybar) - b * (node.getX() - xbar);
+            if (sValues.isEmpty())
+                sValues.add(sj);
+            else
+            {
+                min = 0;
+                max = sValues.size() - 1;
+                while (max >= min)
+                {
+                    mid = (min + max) / 2;
+                    if (sj < sValues.get(mid))
+                        max = mid - 1;
+                    else if (sj > sValues.get(mid))
+                        min = mid + 1;
+                    else
+                    {
+                        min = mid;
+                        break;
+                    }
+                }   
+                sValues.add(min, sj);               
+            }
+        }
+        
+        size = sValues.size();
+        double sbar = (size % 2 == 0 //If even number of elements
+                        ? (sValues.get(size / 2) + sValues.get(size / 2 - 1)) / 2 
+                        :
+                       )
+        return new Line(a, b, xbar, ybar, sbar);
     }
  
+    
+    public static void binInsert()
+    {
+        LinkedList<Double> sValues = new LinkedList<Double>();
+        double sbar = 0, sj = 0;
+        int max, min, mid ;
+        ArrayList<Node> nodes = new ArrayList<Node>();
+        
+        nodes.add(new Node(0, 3, 1));
+        nodes.add(new Node(0, 6, 1));
+        nodes.add(new Node(0, 2, 1));
+        nodes.add(new Node(0, 0, 1));
+        nodes.add(new Node(0, 1, 1));
+        nodes.add(new Node(0, 3, 1));
+        
+        for (Node node : nodes)
+        {
+            sj = node.getX() * 2;
+            if (sValues.isEmpty())
+                sValues.add(sj);
+            else
+            {
+                min = 0;
+                max = sValues.size() - 1;
+                while (max >= min)
+                {
+                    mid = (min + max) / 2;
+                    if (sj < sValues.get(mid))
+                        max = mid - 1;
+                    else if (sj > sValues.get(mid))
+                        min = mid + 1;
+                    else
+                    {
+                        min = mid;
+                        break;
+                    }
+                }   
+                sValues.add(min, sj);
+                //System.out.printf("min = %d, max = %d, sValue = %f\n", min, max, sj);
+            }
+        }
+        
+        for (Double d : sValues)
+            System.out.println(d);
+    }
     
     /**
      * 

@@ -35,13 +35,15 @@ public class Line
     private double b;
     private double xbar;
     private double ybar;
+    private double sbar;
 
-    public Line(double a, double b, double xbar, double ybar)
+    public Line(double a, double b, double xbar, double ybar, double sbar)
     {
         this.a = a;
         this.b = b;
         this.xbar = xbar;
         this.ybar = ybar;
+        this.sbar = sbar;
     }
     
     /**
@@ -106,5 +108,15 @@ public class Line
     public void setYbar(double ybar)
     {
         this.ybar = ybar;
+    }
+    
+    public double getSbar()
+    {
+        return sbar;
+    }
+    
+    public void setSbar(double sbar)
+    {
+        this.sbar = sbar;
     }
 }

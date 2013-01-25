@@ -20,7 +20,7 @@
 
 package main;
 
-import api.InertialPartioner;
+import api.InertialPartitioner;
 import api.Line;
 import api.Node;
 import org.jgrapht.graph.DefaultWeightedEdge;
@@ -39,13 +39,15 @@ public class Main
     public static void main(String[] args) throws Exception
     {
         SimpleWeightedGraph<Node, DefaultWeightedEdge> g = genGraph();
-        Line line = InertialPartioner.getLine(g);
+        Line line = InertialPartitioner.getLine(g);
         
         System.out.printf("a = %f, b = %f, xbar = %f, ybar = %f\n", 
                           line.getA(),
                           line.getB(), 
                           line.getXbar(),
                           line.getYbar());
+        
+ //       InertialPartitioner.binInsert();
     }
     
     /**
