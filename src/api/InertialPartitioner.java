@@ -171,62 +171,16 @@ public class InertialPartitioner
                 }   
                 sValues.add(min, sj);               
             }
-        }
+        } //end for-each node
         
         size = sValues.size();
         double sbar = (size % 2 == 0 //If even number of elements
-                        ? (sValues.get(size / 2) + sValues.get(size / 2 - 1)) / 2 
-                        :
-                       )
+                        ? (sValues.get(size / 2) + sValues.get(size / 2 - 1)) / 2 //Take the avg of the two middle elements
+                        : sValues.get(size / 2 )); //Otherwise, take the middle element
+        
         return new Line(a, b, xbar, ybar, sbar);
     }
  
-    
-    public static void binInsert()
-    {
-        LinkedList<Double> sValues = new LinkedList<Double>();
-        double sbar = 0, sj = 0;
-        int max, min, mid ;
-        ArrayList<Node> nodes = new ArrayList<Node>();
-        
-        nodes.add(new Node(0, 3, 1));
-        nodes.add(new Node(0, 6, 1));
-        nodes.add(new Node(0, 2, 1));
-        nodes.add(new Node(0, 0, 1));
-        nodes.add(new Node(0, 1, 1));
-        nodes.add(new Node(0, 3, 1));
-        
-        for (Node node : nodes)
-        {
-            sj = node.getX() * 2;
-            if (sValues.isEmpty())
-                sValues.add(sj);
-            else
-            {
-                min = 0;
-                max = sValues.size() - 1;
-                while (max >= min)
-                {
-                    mid = (min + max) / 2;
-                    if (sj < sValues.get(mid))
-                        max = mid - 1;
-                    else if (sj > sValues.get(mid))
-                        min = mid + 1;
-                    else
-                    {
-                        min = mid;
-                        break;
-                    }
-                }   
-                sValues.add(min, sj);
-                //System.out.printf("min = %d, max = %d, sValue = %f\n", min, max, sj);
-            }
-        }
-        
-        for (Double d : sValues)
-            System.out.println(d);
-    }
-    
     /**
      * 
      * @param a
