@@ -149,7 +149,7 @@ public class InertialPartitioner
         int max, min, mid, size;
         for (Node node : g.vertexSet())
         {
-            sj = a * (node.getY() - ybar) - b * (node.getX() - xbar);
+            sj = getSj(node, a, b, xbar, ybar);
             if (sValues.isEmpty())
                 sValues.add(sj);
             else
@@ -181,6 +181,24 @@ public class InertialPartitioner
         return new Line(a, b, xbar, ybar, sbar);
     }
  
+    /**
+     * Given a node and values a, b, xbar, ybar of line L, this function returns 
+     * the value sj, which is calculated by a * (y - ybar) - b *(x - xbar)
+     *
+     * @param node
+     * @param a
+     * @param b
+     * @param xbar
+     * @param ybar
+     * @return sj
+     */
+    public static double getSj(Node node, double a, double b, double xbar, double ybar)
+    {
+        return a * (node.getY() - ybar) - b * (node.getX() - xbar);
+    }
+    
+    
+    
     /**
      * 
      * @param a
@@ -226,10 +244,22 @@ public class InertialPartitioner
         return (prod >= 0 ? true : false);
     }
    
-    
-    public static void setSide(SimpleWeightedGraph<Node, DefaultWeightedEdge> g, Line line)
+    /**
+     * For each node in the given graph g, if 
+     * @param g
+     * @param line 
+     */
+    public static void setSideMembershipForNodes(SimpleWeightedGraph<Node, DefaultWeightedEdge> g, Line line)
     {
-        
+        for (Node node : g.vertexSet())
+            setSideMembership(node, line);
     }
 
+    public static void setSideMembership(Node node, Line line)
+    {
+        double sj = getSj(node, line.getA(), line.getB(), line.getXbar(), line.getYbar());
+        node.setSide(sj < line.getSbar() 
+                      ? SideMembership.LEFT 
+                      : SideMembership.RIGHT);
+    }
 }
