@@ -82,6 +82,13 @@ public class InertialPartitioner
      *    An exception is thrown if the system falls into the 1st or 3rd case.
      * 
      * 5) Compute sbar
+     *    Compute sj for each node in the graph. Store these values in a linked 
+     *    list l in ascending order.
+     *    Sbar = median(l)
+     *    In other words, 
+     *      - if the list l has even number of elements, sbar is the average of the
+     *        middle two elements.
+     *      - if the list l has odd number of elements, sbar is the middle element.
      * 
      * @param g
      * @return Line l
@@ -200,6 +207,9 @@ public class InertialPartitioner
     
     
     /**
+     * This function returns an array list containing the solution(s) of a 
+     * quadratic function, which has the form of
+     * aX^2 + bX + c = 0
      * 
      * @param a
      * @param b
@@ -245,7 +255,9 @@ public class InertialPartitioner
     }
    
     /**
-     * For each node in the given graph g, if 
+     * For each node in the given graph g, this function sets the node's side
+     * membership.
+     * 
      * @param g
      * @param line 
      */
@@ -255,6 +267,14 @@ public class InertialPartitioner
             setSideMembership(node, line);
     }
 
+    /**
+     * Given a node, this function computes the value sj. 
+     * If sj < sbar (given by the line), the node's is marked as "LEFT".
+     * Otherwise, it's marked as "RIGHT"
+     * 
+     * @param node
+     * @param line 
+     */
     public static void setSideMembership(Node node, Line line)
     {
         double sj = getSj(node, line.getA(), line.getB(), line.getXbar(), line.getYbar());

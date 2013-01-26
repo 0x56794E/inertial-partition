@@ -119,4 +119,32 @@ public class Line
     {
         this.sbar = sbar;
     }
+    
+    @Override
+    public boolean equals(Object rhs)
+    {
+        if (rhs == null || !(rhs instanceof Line))
+            return false;
+        else
+        {
+            Line rhsLine = (Line)rhs;
+            return this.a == rhsLine.a
+                    && this.b == rhsLine.b
+                    && this.sbar == rhsLine.sbar
+                    && this.xbar == rhsLine.xbar
+                    && this.ybar == rhsLine.ybar;
+        }
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int hash = 3;
+        hash = 89 * hash + (int) (Double.doubleToLongBits(this.a) ^ (Double.doubleToLongBits(this.a) >>> 32));
+        hash = 89 * hash + (int) (Double.doubleToLongBits(this.b) ^ (Double.doubleToLongBits(this.b) >>> 32));
+        hash = 89 * hash + (int) (Double.doubleToLongBits(this.xbar) ^ (Double.doubleToLongBits(this.xbar) >>> 32));
+        hash = 89 * hash + (int) (Double.doubleToLongBits(this.ybar) ^ (Double.doubleToLongBits(this.ybar) >>> 32));
+        hash = 89 * hash + (int) (Double.doubleToLongBits(this.sbar) ^ (Double.doubleToLongBits(this.sbar) >>> 32));
+        return hash;
+    }
 }
