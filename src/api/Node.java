@@ -31,14 +31,12 @@ public class Node
     private int id;
     private int x;
     private int y;
-    private SideMembership side;
     
     public Node(int id, int x, int y)
     {
         this.id = id;
         this.x = x;
         this.y = y;
-        side = SideMembership.LEFT;
     }
     
     /**
@@ -87,22 +85,5 @@ public class Node
     public void setY(int y)
     {
         this.y = y;
-    }
-
-    /**
-     * @return the side this node is on
-     */
-    public SideMembership getSide()
-    {
-        return side;
-    }
-
-    /**
-     * @param side the side to set
-     */
-    public void setSide(SideMembership side)
-    {
-        this.side = side;
-    }
-    
+    }    
 }

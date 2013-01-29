@@ -21,8 +21,8 @@
 
 package api;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.*;
+import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
 
@@ -94,13 +94,13 @@ public class InertialPartitioner
      * @return Line l
      * @throws Exception 
      */
-    public static Line getLine(SimpleWeightedGraph<Node, DefaultWeightedEdge> g) throws Exception
+    public static Line getLine(Collection<Node> nodes) throws Exception
     {
         //Compute xbar and ybar
         double xbar = 0, ybar = 0;
-        final int N = g.vertexSet().size();
+        final int N = nodes.size();
         
-        for (Node node : g.vertexSet())
+        for (Node node : nodes)
         {
             xbar += node.getX();
             ybar += node.getY();
@@ -115,7 +115,7 @@ public class InertialPartitioner
         //Compute sum of squares of distance (x1, x2 and x3)
         double x1 = 0, x3 = 0, x2 = 0;
         double xDif = 0, yDif = 0;
-        for (Node node : g.vertexSet())
+        for (Node node : nodes)
         {
             xDif = node.getX() - xbar;
             yDif = node.getY() - ybar;
@@ -154,9 +154,9 @@ public class InertialPartitioner
         LinkedList<Double> sValues = new LinkedList<Double>();
         double sj = 0;
         int max, min, mid, size;
-        for (Node node : g.vertexSet())
+        for (Node node : nodes)
         {
-            sj = getSj(node, a, b, xbar, ybar);
+            sj = Line.getSj(node, a, b, xbar, ybar);
             if (sValues.isEmpty())
                 sValues.add(sj);
             else
@@ -185,25 +185,56 @@ public class InertialPartitioner
                         ? (sValues.get(size / 2) + sValues.get(size / 2 - 1)) / 2 //Take the avg of the two middle elements
                         : sValues.get(size / 2 )); //Otherwise, take the middle element
         
-        return new Line(a, b, xbar, ybar, sbar);
+        return new Line(a, b, xbar, ybar, sbar, nodes);
     }
  
-    /**
-     * Given a node and values a, b, xbar, ybar of line L, this function returns 
-     * the value sj, which is calculated by a * (y - ybar) - b *(x - xbar)
-     *
-     * @param node
-     * @param a
-     * @param b
-     * @param xbar
-     * @param ybar
-     * @return sj
-     */
-    public static double getSj(Node node, double a, double b, double xbar, double ybar)
+    public static List<Line> getLines(Collection<Node> nodes, int k) throws Exception
     {
-        return a * (node.getY() - ybar) - b * (node.getX() - xbar);
+        ArrayList<Line> lines = new ArrayList<Line>();
+        LinkedList<Collection<Node>> regions = new LinkedList<Collection<Node>>();
+        
+        TreeSet<Collection<Node>> subRegions 
+                = new TreeSet<Collection<Node>>(new Comparator() {
+
+            @Override
+            /**
+             * @return -1 if o1.size < o2.size; 0 if o1.size == o2.size; 1 if o1.size > o2.size
+             *    
+             */
+            public int compare(Object o1, Object o2)
+            {
+                Collection<Node> list1 = (Collection<Node>)o1;
+                Collection<Node> list2 = (Collection<Node>)o2;
+                return (list1.size() > list2.size() ? 
+                        1 :
+                        (list1.size() == list2.size() ? 0 : -1));
+            }
+            
+        });
+        
+        //Line 1
+        Line line = getLine(nodes);
+        lines.add(line);
+        subRegions.add(line.getLeftNodes());
+        subRegions.add(line.getRightNodes());
+        
+        for (int i = 0; i < k; ++i)
+        {
+           //Find the greatest set
+            Collection<Node> largestList = subRegions.last();
+            
+            //Line dividing this set
+            line = getLine(largestList);
+            lines.add(line);
+            
+            //replace the old large region by two newly partitioned regions
+            subRegions.remove(largestList);
+            subRegions.add(line.getLeftNodes());
+            subRegions.add(line.getRightNodes());
+        }
+        
+        return lines;
     }
-    
     
     
     /**
@@ -254,32 +285,33 @@ public class InertialPartitioner
         return (prod >= 0 ? true : false);
     }
    
-    /**
-     * For each node in the given graph g, this function sets the node's side
-     * membership.
-     * 
-     * @param g
-     * @param line 
-     */
-    public static void setSideMembershipForNodes(SimpleWeightedGraph<Node, DefaultWeightedEdge> g, Line line)
-    {
-        for (Node node : g.vertexSet())
-            setSideMembership(node, line);
-    }
 
-    /**
-     * Given a node, this function computes the value sj. 
-     * If sj < sbar (given by the line), the node's is marked as "LEFT".
-     * Otherwise, it's marked as "RIGHT"
-     * 
-     * @param node
-     * @param line 
-     */
-    public static void setSideMembership(Node node, Line line)
+
+    public String getBinaryString(Node node, List<Line> lines)
     {
-        double sj = getSj(node, line.getA(), line.getB(), line.getXbar(), line.getYbar());
-        node.setSide(sj < line.getSbar() 
-                      ? SideMembership.LEFT 
-                      : SideMembership.RIGHT);
+        StringBuilder sb = new StringBuilder();
+        
+        for (Line line : lines)
+            sb.append(line.getSideMembership(node).getValue());
+        
+        return sb.toString();
     }
 }
+
+
+
+/**
+ * Save areas got in a binary tree
+ * Keep dividing the largest area
+ */
+
+
+/**
+ * Read about spectral bisection partitioning graph
+ * 
+ * Method spec:
+ * input: k (number of partition), graph g
+ * output: lines partitioning 
+ * 
+ * Laplace matrix
+ */

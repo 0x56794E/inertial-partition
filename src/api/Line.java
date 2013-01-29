@@ -21,6 +21,15 @@
 
 package api;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import org.jgrapht.Graph;
+import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.DefaultWeightedEdge;
+import org.jgrapht.graph.SimpleWeightedGraph;
+
 /**
  * Represents a line L such that 
  * a * (x - xbar) + b * (y - ybar) = 0
@@ -28,7 +37,9 @@ package api;
  * @author              Vy Thuy Nguyen
  * @version             1.0 Jan 22, 2013
  * Last modified:       
+ TODO: includes sideMembership determining in this class, NOT as static method in inertialPartitioner
  */
+
 public class Line
 {
     private double a;
@@ -37,13 +48,20 @@ public class Line
     private double ybar;
     private double sbar;
 
-    public Line(double a, double b, double xbar, double ybar, double sbar)
+    private ArrayList<Node> leftNodes;
+    private ArrayList<Node> rightNodes;
+    
+    public Line(double a, double b, double xbar, double ybar, double sbar, Collection<Node> nodes)
     {
         this.a = a;
         this.b = b;
         this.xbar = xbar;
         this.ybar = ybar;
         this.sbar = sbar;
+        
+        leftNodes = new ArrayList<Node>();
+        rightNodes = new ArrayList<Node>();
+        partitionGraph(nodes);
     }
     
     /**
@@ -120,6 +138,58 @@ public class Line
         this.sbar = sbar;
     }
     
+    /**
+     * 
+     * @param node
+     * @return the side membership of the given node with respect to this line
+     */
+    public SideMembership getSideMembership(Node node)
+    {
+        double sj = getSj(node);
+        return (sj < sbar ? SideMembership.LEFT : SideMembership.RIGHT);
+    }
+    
+    /**
+     * 
+     * @param node
+     * @param line
+     * @return the side membership of the given node with respect to the given line
+     */
+    public static SideMembership getSideMembership(Node node, Line line)
+    {
+        double sj = Line.getSj(node, line.getA(), line.getB(), line.getXbar(), line.getYbar());
+        return (sj < line.getSbar() ? SideMembership.LEFT : SideMembership.RIGHT);
+    }
+    
+    /**
+     * Given a node, this method returns the value sj corresponding to the node.
+     * sj is calculated by a * (y - ybar) - b * (x - xbar)
+     * 
+     * @param node
+     * @return sj
+     */
+    public double getSj(Node node)
+    {
+        return a * (node.getY() - ybar) - b * (node.getX() - xbar);
+    }
+    
+    /**
+     * Given a node and values a, b, xbar, ybar of line L, this function returns 
+     * the value sj, which is calculated by a * (y - ybar) - b *(x - xbar)
+     *
+     * @param node
+     * @param a
+     * @param b
+     * @param xbar
+     * @param ybar
+     * @return sj
+     */
+    public static double getSj(Node node, double a, double b, double xbar, double ybar)
+    {
+        return a * (node.getY() - ybar) - b * (node.getX() - xbar);
+    }
+    
+    
     @Override
     public boolean equals(Object rhs)
     {
@@ -146,5 +216,26 @@ public class Line
         hash = 89 * hash + (int) (Double.doubleToLongBits(this.ybar) ^ (Double.doubleToLongBits(this.ybar) >>> 32));
         hash = 89 * hash + (int) (Double.doubleToLongBits(this.sbar) ^ (Double.doubleToLongBits(this.sbar) >>> 32));
         return hash;
+    }
+
+    private void partitionGraph(Collection<Node> nodes)
+    {
+        for (Node node : nodes)
+        {
+            if (getSideMembership(node) == SideMembership.LEFT)
+                leftNodes.add(node);
+            else
+                rightNodes.add(node);
+        }
+    }
+    
+    public List<Node> getLeftNodes()
+    {
+        return Collections.unmodifiableList(leftNodes);
+    }
+    
+    public List<Node> getRightNodes()
+    {
+        return Collections.unmodifiableList(rightNodes);
     }
 }

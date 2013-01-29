@@ -23,6 +23,11 @@ package main;
 import api.InertialPartitioner;
 import api.Line;
 import api.Node;
+import api.SideMembership;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.TreeSet;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
 
@@ -38,16 +43,54 @@ public class Main
     
     public static void main(String[] args) throws Exception
     {
-        SimpleWeightedGraph<Node, DefaultWeightedEdge> g = genGraph();
-        Line line = InertialPartitioner.getLine(g);
+//        SimpleWeightedGraph<Node, DefaultWeightedEdge> g = genGraph();
+//        Line line = InertialPartitioner.getLine(g.vertexSet());
+//        
+//        System.out.printf("a = %f, b = %f, xbar = %f, ybar = %f\n", 
+//                          line.getA(),
+//                          line.getB(), 
+//                          line.getXbar(),
+//                          line.getYbar());
+//        
+        //Test
+        TreeSet<Collection<Node>> lists = new TreeSet<Collection<Node>>(new Comparator() {
+
+            @Override
+            public int compare(Object o1, Object o2)
+            {
+                Collection<Node> list1 = (Collection<Node>)o1;
+                Collection<Node> list2 = (Collection<Node>)o2;
+                return (list1.size() > list2.size() ? 
+                        1 :
+                        (list1.size() == list2.size() ? 0 : -1));
+            
+            }
+        });
         
-        System.out.printf("a = %f, b = %f, xbar = %f, ybar = %f\n", 
-                          line.getA(),
-                          line.getB(), 
-                          line.getXbar(),
-                          line.getYbar());
+        //10 elements
+        ArrayList<Node> l1 = new ArrayList<Node>();
+        for (int i = 0; i < 10; ++i)
+            l1.add(new Node(i, i, i));
         
- //       InertialPartitioner.binInsert();
+        
+        //15 elements
+        ArrayList<Node> l2 = new ArrayList<Node>();
+        for (int i = 0; i < 15; ++i)
+            l2.add(new Node(i, i ,i));
+        
+        
+        //5 elements
+        ArrayList<Node> l3 = new ArrayList<Node>();
+        for (int i = 0; i < 5; ++i)
+            l3.add(new Node(i, i, i));
+        
+        lists.add(l1);
+        lists.add(l2);
+        lists.add(l3);
+        
+        System.out.println(lists.last().size());
+        
+        
     }
     
     /**
