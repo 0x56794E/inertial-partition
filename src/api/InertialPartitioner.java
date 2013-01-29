@@ -106,6 +106,7 @@ public class InertialPartitioner
             ybar += node.getY();
         }
         
+        System.out.printf("Sigma x = %f; Sigma y = %f\n", xbar, ybar);
         xbar /= N;
         ybar /= N;
         System.out.printf("Done computing xbar and ybar; xbar = %f, ybar = %f\n",
@@ -143,8 +144,8 @@ public class InertialPartitioner
         System.out.printf("The smallest eigenvalue is: lambda = %f\n", lambda);
         
         //Compute a, b
-        if (Double.compare(x2 * x2, 
-                           (x1 - lambda) * (x3 - lambda)) != 0) //If the system doesn't have inf. number of solultions
+        double epsilon = 0.000001; //to compare to double;
+        if (Math.abs(x2 * x2 - (x1 - lambda) * (x3 - lambda)) > epsilon) //If the system doesn't have inf. number of solultions
             throw new Exception("The system must have inf. number of solutions. Otherwise, the eigenvector would be [0, 0]");
         
         a = (0 - x2) / (x1 -  lambda);

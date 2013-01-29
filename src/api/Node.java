@@ -31,12 +31,24 @@ public class Node
     private int id;
     private int x;
     private int y;
+    private boolean isDead;
     
     public Node(int id, int x, int y)
     {
         this.id = id;
         this.x = x;
         this.y = y;
+        isDead = false;
+    }
+    
+    public void setIsDead(boolean isDead)
+    {
+        this.isDead = isDead;
+    }
+    
+    public boolean getIsDead()
+    {
+        return isDead;
     }
     
     /**

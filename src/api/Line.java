@@ -198,11 +198,12 @@ public class Line
         else
         {
             Line rhsLine = (Line)rhs;
-            return this.a == rhsLine.a
-                    && this.b == rhsLine.b
-                    && this.sbar == rhsLine.sbar
-                    && this.xbar == rhsLine.xbar
-                    && this.ybar == rhsLine.ybar;
+           
+            return Math.abs(this.a - rhsLine.a) < 0.000001
+                    && Math.abs(this.b - rhsLine.b) < 0.000001
+                    && Math.abs(this.sbar - rhsLine.sbar) < 0.000001
+                    && Math.abs(this.xbar - rhsLine.xbar) < 0.000001
+                    && Math.abs(this.ybar - rhsLine.ybar) < 0.000001;
         }
     }
 
@@ -237,5 +238,15 @@ public class Line
     public List<Node> getRightNodes()
     {
         return Collections.unmodifiableList(rightNodes);
+    }
+    
+    public String toString()
+    {
+        return String.format("a = %f; b = %f; sbar = %f; xbar = %f; ybar = %f\n", 
+                             this.a, 
+                             this.b, 
+                             this.sbar, 
+                             this.xbar, 
+                             this.ybar);
     }
 }

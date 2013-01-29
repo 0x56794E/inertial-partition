@@ -39,7 +39,7 @@ import org.jgrapht.graph.SimpleWeightedGraph;
 public class Main 
 {
     public static final int ROW_COUNT = 10;
-    public static final int COL_COUNT = 15;
+    public static final int COL_COUNT = 12;
     
     public static void main(String[] args) throws Exception
     {
@@ -94,11 +94,12 @@ public class Main
     }
     
     /**
-     * Generates a graph for testing purpose
+     * Generates a graph whose nodes are cells in a 10x15 matrix.
+     * All nodes are available.
      * 
      * @return a simple weighted graph 
      */
-    private static SimpleWeightedGraph<Node, DefaultWeightedEdge> genGraph()
+    public static SimpleWeightedGraph<Node, DefaultWeightedEdge> genGraph()
     {
         Node[][] nodeContainer = new Node[ROW_COUNT][COL_COUNT];
         SimpleWeightedGraph<Node, DefaultWeightedEdge> g = 
@@ -112,7 +113,7 @@ public class Main
      * 
      */
     private static void generateVertices(Node[][] nodeContainer, 
-                                  SimpleWeightedGraph<Node, DefaultWeightedEdge> g)
+                                         SimpleWeightedGraph<Node, DefaultWeightedEdge> g)
     {
         int id = 0;
         
@@ -126,7 +127,7 @@ public class Main
     }
     
     private static void generateEdges(Node[][] nodeContainer, 
-                               SimpleWeightedGraph<Node, DefaultWeightedEdge> g)
+                                      SimpleWeightedGraph<Node, DefaultWeightedEdge> g)
     {
         for (int row = 0; row < ROW_COUNT; ++row)
             for (int col = 0; col < COL_COUNT; ++col)
@@ -142,8 +143,8 @@ public class Main
      * @param col 
      */
     private static void addEdges(Node[][] nodeContainer,
-                          SimpleWeightedGraph<Node, DefaultWeightedEdge> g,
-                          int row, int col)
+                                 SimpleWeightedGraph<Node, DefaultWeightedEdge> g,
+                                 int row, int col)
     {
         //Add weighted edge
         //North
