@@ -44,6 +44,16 @@ public class InertialPartitionerTest
     {
     }
 
+    public void testGetLine0() throws Exception
+    {
+        List<Node> nodes = new ArrayList<Node>();
+        for (int x = 0; x < 4; ++x)
+            for (int y = 0; y < 4; ++y)
+                nodes.add(new Node(0, x, y));
+        Line expected = null;
+        doTestGetLine(nodes, expected, "getLine_0");
+    }
+    
     /**
      * Test of getLine method.
      * Case 1: nodes distributed as followed:
@@ -75,7 +85,7 @@ public class InertialPartitionerTest
                                   0.8,      //ybar
                                   0.201236, //sbar
                                   nodes);
-        doTestGetLine(nodes, expected, "testcase1");
+        doTestGetLine(nodes, expected, "getLine_11");
     }
     
     @Test
@@ -97,7 +107,7 @@ public class InertialPartitionerTest
                                   -0.849703, //sbar
                                   nodes);
         
-        doTestGetLine(nodes, expected, "testcase2");
+        doTestGetLine(nodes, expected, "getLine_2");
     }
     
     private void doTestGetLine(Collection<Node> nodes, 

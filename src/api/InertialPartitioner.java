@@ -115,9 +115,9 @@ public class InertialPartitioner
         System.out.printf("Sigma x = %f; Sigma y = %f\n", xbar, ybar);
         xbar /= N;
         ybar /= N;
-        System.out.printf("Done computing xbar and ybar; xbar = %f, ybar = %f\n",
-                          xbar,
-                          ybar);
+//        System.out.printf("Done computing xbar and ybar; xbar = %f, ybar = %f\n",
+//                          xbar,
+//                          ybar);
         
         //Compute sum of squares of distance (x1, x2 and x3)
         double x1 = 0, x3 = 0, x2 = 0;
@@ -130,10 +130,10 @@ public class InertialPartitioner
             x3 += yDif * yDif;
             x2 += xDif * yDif;
         }
-        System.out.printf("Done computing x1, x2 and x3; x1 = %f, x2 = %f, x3 = %f\n",
-                           x1,
-                           x2,
-                           x3);
+//        System.out.printf("Done computing x1, x2 and x3; x1 = %f, x2 = %f, x3 = %f\n",
+//                           x1,
+//                           x2,
+//                           x3);
         
         //Compute a and b
         double a, b, lambda;
@@ -142,9 +142,9 @@ public class InertialPartitioner
                                               x1 * x3 - x2 * x2); //c
         if (sols.isEmpty())
             throw new Exception("No eigenvalue found!");
-        System.out.printf("Done finding eigenvalues; lambda1 = %f, lambda2 = %f\n",
-                          sols.get(0),
-                          sols.get(1));
+//        System.out.printf("Done finding eigenvalues; lambda1 = %f, lambda2 = %f\n",
+//                          sols.get(0),
+//                          sols.get(1));
         
         lambda = Math.min(sols.get(0), sols.get(1));
         System.out.printf("The smallest eigenvalue is: lambda = %f\n", lambda);
@@ -158,15 +158,10 @@ public class InertialPartitioner
             a = (0 - x2) / (x1 -  lambda);
             b = 1;        
         }
-        else if (Math.abs(x2) > EPSILON) //x2 is NOT 0
+        else //(x2 != 0) OR (a and b can be any value since x2 == 0 and x1 == lambda)
         {
             a = 1;
             b = 0;
-        }
-        else //x1 = lambda AND x2 = 0
-        {
-            a = 1;
-            b = 1;
         }
         
         //Compute sbar
@@ -209,16 +204,13 @@ public class InertialPartitioner
  
     public static List<Line> getLines(Collection<Node> nodes, int k) throws Exception
     {
-        ArrayList<Line> lines = new ArrayList<Line>();
-        LinkedList<Collection<Node>> regions = new LinkedList<Collection<Node>>();
+        if (k < 1) throw new Exception("k must be >= 1");
         
-        TreeSet<Collection<Node>> subRegions 
-                = new TreeSet<Collection<Node>>(new Comparator() {
-
+        ArrayList<Line> lines = new ArrayList<Line>();
+        TreeSet<Collection<Node>> subRegions = new TreeSet<Collection<Node>>(new Comparator() {
             @Override
             /**
              * @return -1 if o1.size < o2.size; 0 if o1.size == o2.size; 1 if o1.size > o2.size
-             *    
              */
             public int compare(Object o1, Object o2)
             {
@@ -242,13 +234,17 @@ public class InertialPartitioner
         {
            //Find the greatest set
             Collection<Node> largestList = subRegions.last();
+            System.out.printf("\nLargest region has %d nodes\n", largestList.size());
+            for (Node n : largestList) System.out.printf("%s; ", n);
+            System.out.println("\n");
             
             //Line dividing this set
             line = getLine(largestList);
             lines.add(line);
             
             //replace the old large region by two newly partitioned regions
-            subRegions.remove(largestList);
+            boolean res = subRegions.remove(largestList);
+            System.out.println("removing ok? " + res);
             subRegions.add(line.getLeftNodes());
             subRegions.add(line.getRightNodes());
         }

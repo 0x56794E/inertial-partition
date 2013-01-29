@@ -98,4 +98,9 @@ public class Node
     {
         this.y = y;
     }    
+    
+    public String toString()
+    {
+        return String.format("(%d, %d)", x, y);
+    }
 }
