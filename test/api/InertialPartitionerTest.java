@@ -69,13 +69,13 @@ public class InertialPartitionerTest
         nodes.add(new Node(8, 3, 0));
         nodes.add(new Node(9, 3, 1));
         
-        Line expResult = new Line(0.329213, //a
+        Line expected = new Line(0.329213, //a
                                   1,        //b
                                   1.3,      //xbar
                                   0.8,      //ybar
                                   0.201236, //sbar
                                   nodes);
-        doTestGetLine(nodes, expResult, "testcase1");
+        doTestGetLine(nodes, expected, "testcase1");
     }
     
     @Test
@@ -90,41 +90,61 @@ public class InertialPartitionerTest
         nodes.add(new Node(5, 1, 3));
         nodes.add(new Node(6, -1, 2));
         
-        Line expResult = new Line(0.229640, //a
+        Line expected = new Line(0.229640, //a
                                   1,        //b
                                   3.428571,      //xbar
                                   1.857143,      //ybar
                                   -0.849703, //sbar
                                   nodes);
         
-        doTestGetLine(nodes, expResult, "testcase2");
+        doTestGetLine(nodes, expected, "testcase2");
     }
     
-    private void doTestGetLine(Collection<Node> nodes, Line expResult, String testCase) throws Exception
+    private void doTestGetLine(Collection<Node> nodes, 
+                               Line expected, 
+                               String testName) throws Exception
     {
-        Line result = InertialPartitioner.getLine(nodes);
+        Line actual = InertialPartitioner.getLine(nodes);
         
-        System.out.println("Result for " + testCase + " = " + result);
-        assertEquals(expResult, result);
+        System.out.println("Result for " + testName + " = " + actual);
+        assertEquals(expected, actual);
     }
             
 
     /**
-     * Test of getLines method, of class InertialPartitioner.
+     * A sq area
      */
     @Test
-    public void testGetLines() throws Exception
+    public void testGetLines1() throws Exception
     {
-        System.out.println("getLines");
-        Collection<Node> nodes = null;
-        int k = 0;
-        List expResult = null;
-        List result = InertialPartitioner.getLines(nodes, k);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        List<Node> nodes = new ArrayList<Node>();
+        int k = 4;
+        for (int x = 0; x < 4; ++x)
+            for (int y = 0; y < 4; ++y)
+                nodes.add(new Node(0, x, y));
+        
+        List expected = null;
+        doTestGetLines(nodes,
+                       k,
+                       expected,
+                       "testGetLines1");
     }
 
+    
+    private void doTestGetLines(Collection<Node> nodes, 
+                                int k, 
+                                List<Line> expected,
+                                String testName) throws Exception
+    {
+        List<Line> actual = InertialPartitioner.getLines(nodes, k);
+        System.out.println("Result for " + testName + ": ");
+        for (Line l : actual)
+            System.out.println(l);
+        
+        
+        assertEquals(expected, actual);
+    }
+    
     /**
      * Test of getSolutions method, of class InertialPartitioner.
      */

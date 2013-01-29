@@ -33,6 +33,9 @@ import org.jgrapht.graph.SimpleWeightedGraph;
  */
 public class InertialPartitioner 
 {
+    
+    public static final double EPSILON = 0.000001; //to compare to double;
+        
     /**
      * Given a graph, this function returns the line L that partitions the graph
      * into two parts. 
@@ -77,9 +80,12 @@ public class InertialPartitioner
      *    
      *    Since the 1st and 3rd cases are irrelevant, we only need to look for 
      *    one of the vectors in the eigenspace described above. The easiest
-     *    one to find is the basis itself, which is [-x2 / (x1 - lambda), 1]
+     *    one to find is the basis itself, which is [-x2 / (x1 - lambda), 1] (if x1 != lambda.
+     *    However, if x1 happens to equal to lambda, then we can choose the eigenvector to be [1, (x1 - lambda) / (-x2)]
+     *    If both (x1 - lambda) and x2 are 0, [a, b] can take on any value, thus 
+     *    the function returns [1, 1].
      * 
-     *    An exception is thrown if the system falls into the 1st or 3rd case.
+     *    An exception also is thrown if the system falls into the 1st or 3rd case.
      * 
      * 5) Compute sbar
      *    Compute sj for each node in the graph. Store these values in a linked 
@@ -144,12 +150,24 @@ public class InertialPartitioner
         System.out.printf("The smallest eigenvalue is: lambda = %f\n", lambda);
         
         //Compute a, b
-        double epsilon = 0.000001; //to compare to double;
-        if (Math.abs(x2 * x2 - (x1 - lambda) * (x3 - lambda)) > epsilon) //If the system doesn't have inf. number of solultions
+        if (Math.abs(x2 * x2 - (x1 - lambda) * (x3 - lambda)) > EPSILON) //If the system doesn't have inf. number of solultions
             throw new Exception("The system must have inf. number of solutions. Otherwise, the eigenvector would be [0, 0]");
         
-        a = (0 - x2) / (x1 -  lambda);
-        b = 1;        
+        if (Math.abs(x1 - lambda) > EPSILON) //two numbers are different
+        {    
+            a = (0 - x2) / (x1 -  lambda);
+            b = 1;        
+        }
+        else if (Math.abs(x2) > EPSILON) //x2 is NOT 0
+        {
+            a = 1;
+            b = 0;
+        }
+        else //x1 = lambda AND x2 = 0
+        {
+            a = 1;
+            b = 1;
+        }
         
         //Compute sbar
         LinkedList<Double> sValues = new LinkedList<Double>();
@@ -218,6 +236,7 @@ public class InertialPartitioner
         lines.add(line);
         subRegions.add(line.getLeftNodes());
         subRegions.add(line.getRightNodes());
+        k--;
         
         for (int i = 0; i < k; ++i)
         {
