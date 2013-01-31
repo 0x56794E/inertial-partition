@@ -34,7 +34,7 @@ import org.jgrapht.graph.SimpleWeightedGraph;
 public class InertialPartitioner 
 {
     
-    public static final double EPSILON = 0.000001; //to compare to double;
+    public static final double EPSILON = 0.001; //to compare to double;
         
     /**
      * Given a graph, this function returns the line L that partitions the graph
@@ -115,9 +115,9 @@ public class InertialPartitioner
         System.out.printf("Sigma x = %f; Sigma y = %f\n", xbar, ybar);
         xbar /= N;
         ybar /= N;
-//        System.out.printf("Done computing xbar and ybar; xbar = %f, ybar = %f\n",
-//                          xbar,
-//                          ybar);
+        System.out.printf("Done computing xbar and ybar; xbar = %f, ybar = %f\n",
+                          xbar,
+                          ybar);
         
         //Compute sum of squares of distance (x1, x2 and x3)
         double x1 = 0, x3 = 0, x2 = 0;
@@ -130,10 +130,10 @@ public class InertialPartitioner
             x3 += yDif * yDif;
             x2 += xDif * yDif;
         }
-//        System.out.printf("Done computing x1, x2 and x3; x1 = %f, x2 = %f, x3 = %f\n",
-//                           x1,
-//                           x2,
-//                           x3);
+        System.out.printf("Done computing x1, x2 and x3; x1 = %f, x2 = %f, x3 = %f\n",
+                           x1,
+                           x2,
+                           x3);
         
         //Compute a and b
         double a, b, lambda;
@@ -151,7 +151,8 @@ public class InertialPartitioner
         
         //Compute a, b
         if (Math.abs(x2 * x2 - (x1 - lambda) * (x3 - lambda)) > EPSILON) //If the system doesn't have inf. number of solultions
-            throw new Exception("The system must have inf. number of solutions. Otherwise, the eigenvector would be [0, 0]");
+            throw new Exception("The system must have inf. number of solutions. Otherwise, the eigenvector would be [0, 0]"
+                                + String.format("\nx1 = %f, x2 = %f, x3 = %f", x1, x2, x3));
         
         if (Math.abs(x1 - lambda) > EPSILON) //two numbers are different
         {    
